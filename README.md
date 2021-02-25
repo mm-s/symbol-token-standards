@@ -35,12 +35,28 @@ const transactionParams = new TransactionParameters(
 const authKeys = MnemonicPassPhrase.createRandom() // backup the resulting 24-words safely!
 const tokenKeys = MnemonicPassPhrase.createRandom() // backup the resulting 24-words safely!
 
-// :warning: It is recommended to create operator
-// keys offline and using a separate device.
+// Funded operator accounts, we only need their public key and address.
+// :warning: It is recommended to create operator keys offline using a separate device.
+console.log('Token Operator 1:');
+//secret key. Only known by op1:
+const op1_sk = '901AF6A4FD879950601D0ADA406431E8074C88AA0A0CD2B73F996CE03557056C';
+const op1 = Account.createFromPrivateKey(op1_sk, NetworkType.TEST_NET);
+console.log('  secret key:', op1.privateKey);
+console.log('  public key:', op1.publicKey);
+console.log('  address:', op1.address.pretty());
+
+console.log('Token Operator 2:');
+//secret key. Only known by op2:
+const op2_sk = 'DC163CBA61350C79AC55470FB426A7D0C6CB9523FD22A142495B0744FA825C0E';
+const op2 = Account.createFromPrivateKey(op2_sk, NetworkType.TEST_NET);
+console.log('  secret key:', op2.privateKey);
+console.log('  public key:', op2.publicKey);
+console.log('  address:', op2.address.pretty());
+
 const operators = [
-  new PublicAccount('PUBLIC_KEY_OPERATOR_1', 'ADDRESS_OPERATOR_1'),
-  new PublicAccount('PUBLIC_KEY_OPERATOR_2', 'ADDRESS_OPERATOR_2'),
-  // ...
+  new PublicAccount(op1.publicKey, op1.address),
+  new PublicAccount(op2.publicKey, op2.address)
+  // , new PublicAccount('PUBLIC_KEY_OPERATOR', 'ADDRESS_OPERATOR'),
 ]
 
 // initialize NIP13 library
@@ -49,18 +65,31 @@ const tokenAuthority = new NIP13.TokenAuthority(network, authKeys)
 const securityToken = new NIP13.Token(network, tokenKeys)
 
 // offline creation of the `CreateToken` security token contract
+// Metadata, can be filled with any value.
+
 const metadata = new SecuritiesMetadata(
-  'MIC',
-  'ISIN',
-  'ISO_10962',
-  'Website',
-  'Sector',
-  'Industry',
-  {
-    'customKey1': 'metadata',
-    // ...
-  },
-)
+      '', // ISO_10962 (MIC)
+      '', // ISO_6166 (ISIN)
+      '', // ISO_10383,
+      '', // Website
+      '', // Sector
+      '', // Industry
+      {}, // customMetadata
+    )
+
+const metadata_example_2 = new SecuritiesMetadata(
+      'anything', // ISO_10962 (MIC)
+      'anything', // ISO_6166 (ISIN)
+      'anything', // ISO_10383,
+      'anything', // Website
+      'anything', // Sector
+      'anything', // Industry
+      {
+        'customkey1': 'customdata1',
+        // ...
+      }, // customMetadata
+    )
+
 const tokenId = securityToken.create(
   'My Awesome Security Token', // security token name
   securityToken.getTarget().publicAccount, // actor

@@ -23,6 +23,7 @@ import { AggregateTransaction, PublicAccount, SignedTransaction } from 'symbol-s
 import { MnemonicPassPhrase } from 'symbol-hd-wallets'
 import { NIP13, NetworkConfig, TransactionParameters } from 'symbol-token-standards'
 import { TransactionURI } from 'symbol-uri-scheme'
+import { SecuritiesMetadata } from "symbol-token-standards/dist/src/standards/NIP13/models/SecuritiesMetadata.js"
 
 // :warning: The following settings are network specific and may need changes
 const transactionParams = new TransactionParameters(
